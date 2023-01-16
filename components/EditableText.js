@@ -1,34 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
+import Form from "react-bootstrap/Form";
 
 const EditableText = ({ currentText, setCurrentText }) => {
-  const [editing, setEditing] = useState(false);
-
-  const handleEdit = () => {
-    setEditing(true);
-  };
-
-  const handleSave = (e) => {
-    setEditing(false);
-  };
-
   const handleTextChange = (event) => {
     setCurrentText(event.target.value);
   };
 
   return (
-    <div>
-      {editing ? (
-        <div>
-          <input type="text" value={currentText} onChange={handleTextChange} />
-          <button onClick={handleSave}>Save</button>
-        </div>
-      ) : (
-        <div>
-          {currentText}
-          <button onClick={handleEdit}>Edit</button>
-        </div>
-      )}
-    </div>
+    <Form>
+      <Form.Group>
+        <Form.Control
+          as="textarea"
+          value={currentText}
+          onChange={handleTextChange}
+          rows={3}
+        />
+      </Form.Group>
+    </Form>
   );
 };
 

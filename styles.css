@@ -1,0 +1,14 @@
+h2 {
+    margin-top: 3rem
+}
+
+.microphone-button {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.chat-response {min-height: 300px; padding: 10px; font-size: 1.4rem}
