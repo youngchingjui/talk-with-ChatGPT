@@ -9,7 +9,7 @@ import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 
 const HomePage = () => {
-  const [recognizedSpeech, setRecognizedSpeech] = useState(null);
+  const [recognizedSpeech, setRecognizedSpeech] = useState("");
   const [chatResponse, setChatResponse] = useState(null);
   const [maxTokens, setMaxTokens] = useState(100);
   const [temperature, setTemperature] = useState(0);
