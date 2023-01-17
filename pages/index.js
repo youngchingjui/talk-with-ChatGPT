@@ -29,18 +29,8 @@ const HomePage = () => {
       temperature: parseFloat(temperature),
       max_tokens: parseInt(maxTokens),
     };
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENAI_API_KEY}`,
-      },
-    };
     try {
-      const res = await axios.post(
-        "https://api.openai.com/v1/completions",
-        data,
-        config
-      );
+      const res = await axios.post("/api/openai", data);
       setSending(false);
       console.log("res", res);
       setChatResponse(res.data.choices[0].text);
