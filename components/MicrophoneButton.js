@@ -7,6 +7,7 @@ const MicrophoneButton = ({ result, setResult, sendToOpenAI }) => {
   const handleClick = () => {
     if (!listening) {
       recognitionRef.current = new webkitSpeechRecognition();
+      recognitionRef.current.interimResults = true;
       recognitionRef.current.onresult = (event) => {
         setResult(event.results[0][0].transcript);
         console.log(event.results[0][0].transcript);
