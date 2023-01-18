@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import MicrophoneButton from "../components/MicrophoneButton";
 import EditableText from "../components/EditableText";
@@ -8,10 +8,12 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 
+const MAX_TOKENS = 4000;
+
 const HomePage = () => {
   const [recognizedSpeech, setRecognizedSpeech] = useState("");
   const [chatResponse, setChatResponse] = useState(null);
-  const [maxTokens, setMaxTokens] = useState(100);
+  const [maxTokens, setMaxTokens] = useState(MAX_TOKENS);
   const [temperature, setTemperature] = useState(0);
   const [sending, setSending] = useState(false);
 
