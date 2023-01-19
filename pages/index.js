@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import MicrophoneButton from "../components/MicrophoneButton";
 import EditableText from "../components/EditableText";
