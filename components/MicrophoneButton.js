@@ -19,6 +19,41 @@ const MicrophoneButton = ({ result, setResult, sendToOpenAI, language }) => {
         setResult(event.results[0][0].transcript);
         console.log(event.results[0][0].transcript);
       };
+
+      // add event listeners for each event on the speechrecognition object
+      recognitionRef.current.addEventListener("error", (event) => {
+        console.log("Error:", event.error);
+      });
+
+      recognitionRef.current.addEventListener("start", () => {
+        console.log("started");
+      });
+      recognitionRef.current.addEventListener("end", () => {
+        console.log("ended");
+        setListening(false);
+      });
+      recognitionRef.current.addEventListener("nomatch", () => {
+        console.log("nomatch");
+      });
+      recognitionRef.current.addEventListener("soundstart", () => {
+        console.log("soundstart");
+      });
+      recognitionRef.current.addEventListener("soundend", () => {
+        console.log("soundend");
+      });
+      recognitionRef.current.addEventListener("speechstart", () => {
+        console.log("speechstart");
+      });
+      recognitionRef.current.addEventListener("speechend", () => {
+        console.log("speechend");
+      });
+      recognitionRef.current.addEventListener("audiostart", () => {
+        console.log("audiostart");
+      });
+      recognitionRef.current.addEventListener("audioend", () => {
+        console.log("audioend");
+      });
+
       recognitionRef.current.start();
       setListening(true);
     } else {
@@ -28,6 +63,7 @@ const MicrophoneButton = ({ result, setResult, sendToOpenAI, language }) => {
     }
   };
 
+  // BUG: On Safari, speechrecognition will automatically send end event after speechend event, but audioend and soundend are not triggered. So microphone is still on, and transcription is still running, even after speech end.
   return (
     <div
       style={{
