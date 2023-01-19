@@ -168,6 +168,8 @@ const HomePage = () => {
         )}
         {(process.env.VERCEL_ENV === "preview" ||
           process.env.NODE_ENV === "development") && <DebugPanel />}
+        {`VERCEL_ENV: ${process.env.VERCEL_ENV}`}
+        {`NODE_ENV: ${process.env.NODE_ENV}`}
       </Container>
     </>
   );
