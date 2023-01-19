@@ -3,10 +3,13 @@ import React, { useState, useEffect } from "react";
 const DebugPanel = () => {
   const [logs, setLogs] = useState([]);
   const [userAgent, setUserAgent] = useState("");
+  const [language, setLanguage] = useState("");
+  const [languages, setLanguages] = useState("");
 
   useEffect(() => {
     setUserAgent(navigator.userAgent);
-
+    setLanguage(navigator.language);
+    setLanguages(navigator.languages);
     // Override the console.log function to capture logs
     const originalConsoleLog = console.log;
     console.log = (...args) => {
@@ -19,8 +22,10 @@ const DebugPanel = () => {
     <div>
       <h2>Debug Panel</h2>
       <div>
-        <h3>User Agent</h3>
-        <p>{userAgent}</p>
+        <h3>User Details</h3>
+        <p>{`User Agent: ${userAgent}`}</p>
+        <p>{`Language: ${language}`}</p>
+        <p>{`Languages: ${languages}`}</p>
       </div>
       <div>
         <h3>Console Logs</h3>
