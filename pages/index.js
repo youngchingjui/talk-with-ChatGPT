@@ -7,8 +7,23 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
+import Form from "react-bootstrap/Form";
 
 const MAX_TOKENS = 4000;
+
+const langTags = [
+  { value: "en", label: "English" },
+  { value: "es", label: "Spanish" },
+  { value: "fr", label: "French" },
+  { value: "de", label: "German" },
+  { value: "it", label: "Italian" },
+  { value: "zh-hans", label: "Chinese" },
+  { value: "kr", label: "Korean" },
+  { value: "ja", label: "Japanese" },
+  { value: "ru", label: "Russian" },
+  { value: "ar", label: "Arabic" },
+  { value: "hi", label: "Hindi" },
+];
 
 const HomePage = () => {
   const [recognizedSpeech, setRecognizedSpeech] = useState("");
@@ -16,6 +31,12 @@ const HomePage = () => {
   const [maxTokens, setMaxTokens] = useState(MAX_TOKENS);
   const [temperature, setTemperature] = useState(0);
   const [sending, setSending] = useState(false);
+  const [recognitionLanguage, setRecognitionLanguage] = useState("en");
+
+  useEffect(() => {
+    // Get the user's language from the HTML lang attribute on client side
+    setRecognitionLanguage(document.querySelector("html").lang);
+  }, []);
 
   const sendToOpenAI = async () => {
     console.log("sending to ChatGPT");
@@ -61,7 +82,19 @@ const HomePage = () => {
               result={recognizedSpeech}
               setResult={setRecognizedSpeech}
               sendToOpenAI={sendToOpenAI}
+              language={recognitionLanguage}
             />
+            <Form.Select
+              type=""
+              value={recognitionLanguage}
+              onChange={(e) => setRecognitionLanguage(e.target.value)}
+            >
+              {langTags.map((lang) => (
+                <option key={lang.value} value={lang.value}>
+                  {lang.label}
+                </option>
+              ))}
+            </Form.Select>
             <div>Tap to speak, tap again to turn off</div>
           </Col>
           <Col>
