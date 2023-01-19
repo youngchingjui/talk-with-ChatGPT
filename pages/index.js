@@ -166,7 +166,8 @@ const HomePage = () => {
             {chatResponse}
           </div>
         )}
-        {process.env.NODE_ENV === "development" && <DebugPanel />}
+        {process.env.VERCEL_ENV === "preview" ||
+          (process.env.NODE_ENV === "development" && <DebugPanel />)}
       </Container>
     </>
   );
