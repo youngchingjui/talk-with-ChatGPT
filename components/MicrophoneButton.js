@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
 
-const MicrophoneButton = ({ result, setResult, sendToOpenAI }) => {
+const MicrophoneButton = ({ result, setResult, sendToOpenAI, language }) => {
   const [listening, setListening] = useState(false);
   const recognitionRef = useRef(null);
+
+  // Retrieve user's HTML lang attribute
 
   const handleClick = () => {
     if (!listening) {
@@ -11,6 +13,7 @@ const MicrophoneButton = ({ result, setResult, sendToOpenAI }) => {
         window.SpeechRecognition || window.webkitSpeechRecognition;
 
       recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.lang = language;
       recognitionRef.current.interimResults = true;
       recognitionRef.current.onresult = (event) => {
         setResult(event.results[0][0].transcript);
