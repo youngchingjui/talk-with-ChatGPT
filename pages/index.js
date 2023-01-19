@@ -8,6 +8,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import Form from "react-bootstrap/Form";
+import DebugPanel from "../components/DebugPanel";
 
 const MAX_TOKENS = 4000;
 
@@ -165,6 +166,7 @@ const HomePage = () => {
             {chatResponse}
           </div>
         )}
+        {process.env.NODE_ENV === "development" && <DebugPanel />}
       </Container>
     </>
   );
