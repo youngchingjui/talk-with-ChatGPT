@@ -87,12 +87,12 @@ const HomePage = () => {
   return (
     <Container>
       <Row>
-        <h1>Talk with OpenAI</h1>
+        <h1>Talking Terry</h1>
       </Row>
       <Row>
         <div>
-          Welcome to Talk with OpenAI, where you use your microphone to chat
-          with OpenAI, instead of a keyboard
+          Welcome to Talking Terry, where you use your microphone to chat with
+          OpenAI, instead of a keyboard
         </div>
       </Row>
       <h2>Ask a question</h2>
