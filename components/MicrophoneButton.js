@@ -1,12 +1,13 @@
-import React, { useRef, useState } from "react";
-import { Button, ToastContainer } from "react-bootstrap";
-import UnsupportedBrowserToast from "./UnsupportedBrowserToast";
+import React, { useRef, useState } from "react"
+import ToastContainer from "react-bootstrap/ToastContainer"
+
+import UnsupportedBrowserToast from "./UnsupportedBrowserToast"
 
 const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
-  const [listening, setListening] = useState(false);
+  const [listening, setListening] = useState(false)
   const [showUnsupportedBrowserToast, setShowUnsupportedBrowserToast] =
-    useState(false);
-  const recognitionRef = useRef(null);
+    useState(false)
+  const recognitionRef = useRef(null)
 
   // Retrieve user's HTML lang attribute
 
@@ -14,59 +15,59 @@ const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
     if (!listening) {
       // Create new SpeechRecognition object that works across browsers, and assign it to recognitionRef
       window.SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
+        window.SpeechRecognition || window.webkitSpeechRecognition
 
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.lang = language;
-      recognitionRef.current.interimResults = true;
+      recognitionRef.current = new SpeechRecognition()
+      recognitionRef.current.lang = language
+      recognitionRef.current.interimResults = true
       recognitionRef.current.onresult = (event) => {
-        setResult(event.results[0][0].transcript);
-        console.log(event.results[0][0].transcript);
-      };
+        setResult(event.results[0][0].transcript)
+        console.log(event.results[0][0].transcript)
+      }
 
       // add event listeners for each event on the speechrecognition object
       recognitionRef.current.addEventListener("error", (event) => {
-        console.log("Error:", event.error);
-        setShowUnsupportedBrowserToast(true);
-      });
+        console.log("Error:", event.error)
+        setShowUnsupportedBrowserToast(true)
+      })
 
       recognitionRef.current.addEventListener("start", () => {
-        console.log("started");
-      });
+        console.log("started")
+      })
       recognitionRef.current.addEventListener("end", () => {
-        console.log("ended");
-        setListening(false);
-      });
+        console.log("ended")
+        setListening(false)
+      })
       recognitionRef.current.addEventListener("nomatch", () => {
-        console.log("nomatch");
-      });
+        console.log("nomatch")
+      })
       recognitionRef.current.addEventListener("soundstart", () => {
-        console.log("soundstart");
-      });
+        console.log("soundstart")
+      })
       recognitionRef.current.addEventListener("soundend", () => {
-        console.log("soundend");
-      });
+        console.log("soundend")
+      })
       recognitionRef.current.addEventListener("speechstart", () => {
-        console.log("speechstart");
-      });
+        console.log("speechstart")
+      })
       recognitionRef.current.addEventListener("speechend", () => {
-        console.log("speechend");
-      });
+        console.log("speechend")
+      })
       recognitionRef.current.addEventListener("audiostart", () => {
-        console.log("audiostart");
-      });
+        console.log("audiostart")
+      })
       recognitionRef.current.addEventListener("audioend", () => {
-        console.log("audioend");
-      });
+        console.log("audioend")
+      })
 
-      recognitionRef.current.start();
-      setListening(true);
+      recognitionRef.current.start()
+      setListening(true)
     } else {
-      recognitionRef.current.stop();
-      setListening(false);
-      sendToOpenAI();
+      recognitionRef.current.stop()
+      setListening(false)
+      sendToOpenAI()
     }
-  };
+  }
 
   // BUG: On Safari, speechrecognition will automatically send end event after speechend event, but audioend and soundend are not triggered. So microphone is still on, and transcription is still running, even after speech end.
   return (
@@ -100,7 +101,7 @@ const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
         />
       </ToastContainer>
     </>
-  );
-};
+  )
+}
 
-export default MicrophoneButton;
+export default MicrophoneButton
