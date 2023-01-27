@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios"
 const handler = async (req, res) => {
   try {
     const response = await axios.post(
@@ -10,11 +10,11 @@ const handler = async (req, res) => {
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
       }
-    );
-    res.status(200).json(response.data);
+    )
+    res.status(200).json(response.data)
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: err.message })
   }
-};
+}
 
-export default handler;
+export default handler

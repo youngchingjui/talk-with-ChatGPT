@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react"
 
 const DebugPanel = () => {
-  const [logs, setLogs] = useState([]);
-  const [userAgent, setUserAgent] = useState("");
-  const [language, setLanguage] = useState("");
-  const [languages, setLanguages] = useState("");
+  const [logs, setLogs] = useState([])
+  const [userAgent, setUserAgent] = useState("")
+  const [language, setLanguage] = useState("")
+  const [languages, setLanguages] = useState("")
 
   useEffect(() => {
-    setUserAgent(navigator.userAgent);
-    setLanguage(navigator.language);
-    setLanguages(navigator.languages);
+    setUserAgent(navigator.userAgent)
+    setLanguage(navigator.language)
+    setLanguages(navigator.languages)
     // Override the console.log function to capture logs
-    const originalConsoleLog = console.log;
+    const originalConsoleLog = console.log
     console.log = (...args) => {
-      setLogs((prevLogs) => [...prevLogs, args]);
-      originalConsoleLog(...args);
-    };
-  }, []);
+      setLogs((prevLogs) => [...prevLogs, args])
+      originalConsoleLog(...args)
+    }
+  }, [])
 
   return (
     <div>
@@ -38,7 +38,7 @@ const DebugPanel = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default DebugPanel;
+export default DebugPanel

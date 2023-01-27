@@ -1,10 +1,10 @@
-import React from "react";
-import Form from "react-bootstrap/Form";
+import React from "react"
+import Form from "react-bootstrap/Form"
 
 const EditableText = ({ currentText, setCurrentText }) => {
   const handleTextChange = (event) => {
-    setCurrentText(event.target.value);
-  };
+    setCurrentText(event.target.value)
+  }
 
   return (
     <Form>
@@ -17,7 +17,7 @@ const EditableText = ({ currentText, setCurrentText }) => {
         />
       </Form.Group>
     </Form>
-  );
-};
+  )
+}
 
-export default EditableText;
+export default EditableText
