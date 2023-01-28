@@ -2,10 +2,10 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import Container from "react-bootstrap/Container"
 
-import Message from "../../components/Message"
-import MicrophoneButton from "../../components/MicrophoneButton"
-import NavBar from "../../components/NavBar"
-import messages from "../../mocks/messages.json"
+import Message from "../components/Message"
+import MicrophoneButton from "../components/MicrophoneButton"
+import NavBar from "../components/NavBar"
+import messages from "../mocks/messages.json"
 
 const MAX_TOKENS = 4000
 

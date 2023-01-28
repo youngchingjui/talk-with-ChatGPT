@@ -9,10 +9,10 @@ import Spinner from "react-bootstrap/Spinner"
 import Stack from "react-bootstrap/Stack"
 import ToggleButton from "react-bootstrap/ToggleButton"
 
-import DebugPanel from "../components/DebugPanel"
-import EditableText from "../components/EditableText"
-import MicrophoneButton from "../components/MicrophoneButton"
-import { isDevEnv } from "../functions/helper"
+import DebugPanel from "../../components/DebugPanel"
+import EditableText from "../../components/EditableText"
+import MicrophoneButton from "../../components/MicrophoneButton"
+import { isDevEnv } from "../../functions/helper"
 
 const MAX_TOKENS = 4000
 
