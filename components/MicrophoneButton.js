@@ -50,7 +50,8 @@ const MicrophoneButton = ({
 
     recognitionRef.current.addEventListener("end", (event) => {
       console.log("ended")
-      addMessage(resultRef.current)
+      addMessage({ text: resultRef.current, from: "user" })
+      sendToOpenAI(resultRef.current)
       setResult("")
       setMicState(micStatus.idle)
     })
