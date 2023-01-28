@@ -32,8 +32,8 @@ const MicrophoneButton = ({
     resultRef.current = result
   }, [result])
 
-  const handleMouseDown = () => {
-    console.log("mouse down")
+  const handlePointerDown = () => {
+    console.log("pointer down")
     setMicState(micStatus.loading)
 
     // Capture all events
@@ -87,8 +87,8 @@ const MicrophoneButton = ({
     recognitionRef.current.start()
   }
 
-  const handleMouseUp = () => {
-    console.log("mouse up")
+  const handlePointerUp = () => {
+    console.log("pointer up")
     recognitionRef.current.stop()
     setMicState(micStatus.idle)
   }
@@ -106,12 +106,8 @@ const MicrophoneButton = ({
       >
         <button
           className={`microphone-button ${micState}`}
-          // onMouseDown={handleMouseDown}
-          // onMouseUp={handleMouseUp}
-          // onTouchStart={handleMouseDown}
-          // onTouchEnd={handleMouseUp}
-          onPointerDown={handleMouseDown}
-          onPointerUp={handleMouseUp}
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
         >
           <MicIcon height={70} width={44} />
         </button>
