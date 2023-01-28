@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react"
 import { Container } from "react-bootstrap"
 
 import Message from "../../components/Message"
-import MicrophoneButton2 from "../../components/MicrophoneButton2"
+import MicrophoneButton from "../../components/MicrophoneButton"
 import NavBar from "../../components/NavBar"
 
 const messages = [
@@ -24,6 +25,21 @@ const messages = [
 ]
 
 const ChatPage = () => {
+  const [recognizedSpeech, setRecognizedSpeech] = useState("")
+  const [recognitionLanguage, setRecognitionLanguage] = useState("en")
+
+  // Get the user's language from the HTML lang attribute on client side
+  useEffect(() => {
+    setRecognitionLanguage(document.querySelector("html").lang)
+  }, [])
+
+  const sendToOpenAI = () => {
+    console.log("sending to ChatGPT")
+    if (!recognizedSpeech) {
+      return
+    }
+  }
+
   return (
     <>
       <NavBar />
@@ -33,7 +49,12 @@ const ChatPage = () => {
             <Message message={message.text} sender={message.from} key={index} />
           )
         })}
-        <MicrophoneButton2 />
+        <MicrophoneButton
+          result={recognizedSpeech}
+          setResult={setRecognizedSpeech}
+          sendToOpenAI={sendToOpenAI}
+          language={recognitionLanguage}
+        />
       </Container>
     </>
   )

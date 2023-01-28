@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react"
 import ToastContainer from "react-bootstrap/ToastContainer"
 
+import MicIcon from "../public/svg/mic.svg"
 import UnsupportedBrowserToast from "./UnsupportedBrowserToast"
 
 const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
@@ -69,27 +70,39 @@ const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
     }
   }
 
+  const handleMouseDown = () => {
+    console.log("mouse down")
+  }
+
+  const handleMouseUp = () => {
+    console.log("mouse up")
+  }
+
   // BUG: On Safari, speechrecognition will automatically send end event after speechend event, but audioend and soundend are not triggered. So microphone is still on, and transcription is still running, even after speech end.
   return (
     <>
       <div
         style={{
-          border: listening ? "3px solid green" : "1px solid grey",
+          position: "fixed",
+          bottom: "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
         }}
-        className="microphone-button d-flex align-items-center justify-content-center"
-        onClick={handleClick}
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          className="bi bi-mic"
-          viewBox="0 0 16 16"
+        <button
+          style={{
+            borderRadius: "50%",
+            width: "120px",
+            height: "120px",
+            backgroundColor: "blue",
+            border: "none",
+          }}
+          onClick={handleClick}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
         >
-          <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5z" />
-          <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0v5zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3z" />
-        </svg>
+          <MicIcon height={70} width={44} />
+        </button>
       </div>
       <ToastContainer position="top-end" className="mt-2 me-2">
         <UnsupportedBrowserToast
