@@ -106,8 +106,12 @@ const MicrophoneButton = ({
       >
         <button
           className={`microphone-button ${micState}`}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
+          // onMouseDown={handleMouseDown}
+          // onMouseUp={handleMouseUp}
+          // onTouchStart={handleMouseDown}
+          // onTouchEnd={handleMouseUp}
+          onPointerDown={handleMouseDown}
+          onPointerUp={handleMouseUp}
         >
           <MicIcon height={70} width={44} />
         </button>
