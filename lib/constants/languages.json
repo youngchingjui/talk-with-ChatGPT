@@ -1,0 +1,46 @@
+[
+    {
+        "value": "en",
+        "label": "English"
+    },
+    {
+        "value": "es",
+        "label": "Spanish"
+    },
+    {
+        "value": "fr",
+        "label": "French"
+    },
+    {
+        "value": "de",
+        "label": "German"
+    },
+    {
+        "value": "it",
+        "label": "Italian"
+    },
+    {
+        "value": "zh-hans",
+        "label": "Chinese"
+    },
+    {
+        "value": "kr",
+        "label": "Korean"
+    },
+    {
+        "value": "ja",
+        "label": "Japanese"
+    },
+    {
+        "value": "ru",
+        "label": "Russian"
+    },
+    {
+        "value": "ar",
+        "label": "Arabic"
+    },
+    {
+        "value": "hi",
+        "label": "Hindi"
+    }
+]
