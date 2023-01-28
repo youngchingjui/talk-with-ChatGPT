@@ -1,18 +1,21 @@
 import React, { useRef, useState } from "react"
 import ToastContainer from "react-bootstrap/ToastContainer"
 
+import micStatus from "../lib/models/micStatus"
 import MicIcon from "../public/svg/mic.svg"
 import UnsupportedBrowserToast from "./UnsupportedBrowserToast"
 
 const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
   const [listening, setListening] = useState(false)
+  const [micState, setMicState] = useState(micStatus.idle)
   const [showUnsupportedBrowserToast, setShowUnsupportedBrowserToast] =
     useState(false)
   const recognitionRef = useRef(null)
 
-  // Retrieve user's HTML lang attribute
+  const handleMouseDown = () => {
+    console.log("mouse down")
+    setMicState(micStatus.loading)
 
-  const handleClick = () => {
     if (!listening) {
       // Create new SpeechRecognition object that works across browsers, and assign it to recognitionRef
       window.SpeechRecognition =
@@ -30,14 +33,17 @@ const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
       recognitionRef.current.addEventListener("error", (event) => {
         console.log("Error:", event.error)
         setShowUnsupportedBrowserToast(true)
+        setMicState(micStatus.idle)
       })
 
       recognitionRef.current.addEventListener("start", () => {
         console.log("started")
+        setMicState(micStatus.listening)
       })
       recognitionRef.current.addEventListener("end", () => {
         console.log("ended")
         setListening(false)
+        setMicState(micStatus.idle)
       })
       recognitionRef.current.addEventListener("nomatch", () => {
         console.log("nomatch")
@@ -70,12 +76,10 @@ const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
     }
   }
 
-  const handleMouseDown = () => {
-    console.log("mouse down")
-  }
-
   const handleMouseUp = () => {
     console.log("mouse up")
+    recognitionRef.current.stop()
+    setMicState(micStatus.idle)
   }
 
   // BUG: On Safari, speechrecognition will automatically send end event after speechend event, but audioend and soundend are not triggered. So microphone is still on, and transcription is still running, even after speech end.
@@ -90,14 +94,7 @@ const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
         }}
       >
         <button
-          style={{
-            borderRadius: "50%",
-            width: "120px",
-            height: "120px",
-            backgroundColor: "blue",
-            border: "none",
-          }}
-          onClick={handleClick}
+          className={`microphone-button ${micState}`}
           onMouseDown={handleMouseDown}
           onMouseUp={handleMouseUp}
         >

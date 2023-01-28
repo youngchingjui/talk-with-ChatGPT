@@ -1,12 +1,35 @@
+:root {
+    --primary-color: #0077B6;
+    --recording-color: #D30000
+}
+
 h2 {
     margin-top: 3rem
 }
 
 .microphone-button {
-    width: 100px;
-    height: 100px;
     border-radius: 50%;
-    border-color: black;
-    border-width: 1px;
+    width: 120px;
+    height: 120px;
+}
+
+.microphone-button.idle {
+    background-color: var(--primary-color);
+    border: none;
+}
+
+.microphone-button.loading {
+    background-color: white;
+    border-color: var(--recording-color);
+    border-width: 3px;
     border-style: solid;
+}
+
+.microphone-button.loading path {
+    fill: var(--recording-color)
+}
+
+.microphone-button.listening {
+    background-color: var(--recording-color);
+    border: none;
 }
