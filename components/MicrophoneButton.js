@@ -1,79 +1,90 @@
-import React, { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import ToastContainer from "react-bootstrap/ToastContainer"
 
 import micStatus from "../lib/models/micStatus"
 import MicIcon from "../public/svg/mic.svg"
 import UnsupportedBrowserToast from "./UnsupportedBrowserToast"
 
-const MicrophoneButton = ({ setResult, sendToOpenAI, language }) => {
-  const [listening, setListening] = useState(false)
+const MicrophoneButton = ({
+  result,
+  setResult,
+  sendToOpenAI,
+  addMessage,
+  language,
+}) => {
   const [micState, setMicState] = useState(micStatus.idle)
   const [showUnsupportedBrowserToast, setShowUnsupportedBrowserToast] =
     useState(false)
   const recognitionRef = useRef(null)
+  const resultRef = useRef("")
+
+  // Create new SpeechRecognition object that works across browsers, and assign it to recognitionRef
+  if (typeof window !== "undefined") {
+    window.SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition
+    recognitionRef.current = new SpeechRecognition()
+    recognitionRef.current.lang = language
+    recognitionRef.current.interimResults = true
+  }
+
+  // Update ref with latest result
+  useEffect(() => {
+    resultRef.current = result
+  }, [result])
 
   const handleMouseDown = () => {
     console.log("mouse down")
     setMicState(micStatus.loading)
 
-    if (!listening) {
-      // Create new SpeechRecognition object that works across browsers, and assign it to recognitionRef
-      window.SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition
+    // Capture all events
+    // Main events
+    recognitionRef.current.addEventListener("start", () => {
+      console.log("started")
+      setMicState(micStatus.listening)
+    })
 
-      recognitionRef.current = new SpeechRecognition()
-      recognitionRef.current.lang = language
-      recognitionRef.current.interimResults = true
-      recognitionRef.current.onresult = (event) => {
-        setResult(event.results[0][0].transcript)
-        console.log(event.results[0][0].transcript)
-      }
+    recognitionRef.current.addEventListener("result", (event) => {
+      setResult(event.results[0][0].transcript)
+      console.log(event.results[0][0].transcript)
+    })
 
-      // add event listeners for each event on the speechrecognition object
-      recognitionRef.current.addEventListener("error", (event) => {
-        console.log("Error:", event.error)
-        setShowUnsupportedBrowserToast(true)
-        setMicState(micStatus.idle)
-      })
+    recognitionRef.current.addEventListener("end", (event) => {
+      console.log("ended")
+      addMessage(resultRef.current)
+      setResult("")
+      setMicState(micStatus.idle)
+    })
 
-      recognitionRef.current.addEventListener("start", () => {
-        console.log("started")
-        setMicState(micStatus.listening)
-      })
-      recognitionRef.current.addEventListener("end", () => {
-        console.log("ended")
-        setListening(false)
-        setMicState(micStatus.idle)
-      })
-      recognitionRef.current.addEventListener("nomatch", () => {
-        console.log("nomatch")
-      })
-      recognitionRef.current.addEventListener("soundstart", () => {
-        console.log("soundstart")
-      })
-      recognitionRef.current.addEventListener("soundend", () => {
-        console.log("soundend")
-      })
-      recognitionRef.current.addEventListener("speechstart", () => {
-        console.log("speechstart")
-      })
-      recognitionRef.current.addEventListener("speechend", () => {
-        console.log("speechend")
-      })
-      recognitionRef.current.addEventListener("audiostart", () => {
-        console.log("audiostart")
-      })
-      recognitionRef.current.addEventListener("audioend", () => {
-        console.log("audioend")
-      })
+    recognitionRef.current.addEventListener("error", (event) => {
+      console.log("Error:", event.error)
+      setShowUnsupportedBrowserToast(true)
+      setMicState(micStatus.idle)
+    })
 
-      recognitionRef.current.start()
-      setListening(true)
-    } else {
-      recognitionRef.current.stop()
-      setListening(false)
-      sendToOpenAI()
-    }
+    // Other events
+    recognitionRef.current.addEventListener("audiostart", () => {
+      console.log("audiostart")
+    })
+    recognitionRef.current.addEventListener("audioend", () => {
+      console.log("audioend")
+    })
+    recognitionRef.current.addEventListener("soundstart", () => {
+      console.log("soundstart")
+    })
+    recognitionRef.current.addEventListener("soundend", () => {
+      console.log("soundend")
+    })
+    recognitionRef.current.addEventListener("speechstart", () => {
+      console.log("speechstart")
+    })
+    recognitionRef.current.addEventListener("speechend", () => {
+      console.log("speechend")
+    })
+    recognitionRef.current.addEventListener("nomatch", () => {
+      console.log("nomatch")
+    })
+
+    recognitionRef.current.start()
   }
 
   const handleMouseUp = () => {

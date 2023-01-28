@@ -9,11 +9,16 @@ import messages from "../../mocks/messages.json"
 const ChatPage = () => {
   const [recognizedSpeech, setRecognizedSpeech] = useState("")
   const [recognitionLanguage, setRecognitionLanguage] = useState("en")
+  const [messageList, setMessageList] = useState(messages)
 
   // Get the user's language from the HTML lang attribute on client side
   useEffect(() => {
     setRecognitionLanguage(document.querySelector("html").lang)
   }, [])
+
+  const addMessage = (message) => {
+    setMessageList((prev) => [...prev, { text: message, from: "user" }])
+  }
 
   const sendToOpenAI = () => {
     console.log("sending to ChatGPT")
@@ -26,16 +31,20 @@ const ChatPage = () => {
     <>
       <NavBar />
       <Container style={{ paddingTop: 70 }}>
-        {messages.map((message, index) => {
+        {messageList.map((message, index) => {
           return (
             <Message message={message.text} sender={message.from} key={index} />
           )
         })}
+        {recognizedSpeech.length > 0 && (
+          <Message message={recognizedSpeech} sender="user" />
+        )}
         <MicrophoneButton
           result={recognizedSpeech}
           setResult={setRecognizedSpeech}
           sendToOpenAI={sendToOpenAI}
           language={recognitionLanguage}
+          addMessage={addMessage}
         />
       </Container>
     </>
