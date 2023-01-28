@@ -5,13 +5,13 @@ import Offcanvas from "react-bootstrap/Offcanvas"
 
 const NavBar = () => {
   return (
-    <Navbar bg="primary" expand={false} variant="dark">
+    <Navbar bg="primary" expand={false} variant="dark" fixed="top">
       <Container>
         <Navbar.Brand href="#home">Talking Terry</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Offcanvas placement="start">
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Offcanvas</Offcanvas.Title>
+            <Offcanvas.Title>Menu</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Form>

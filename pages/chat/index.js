@@ -27,7 +27,7 @@ const ChatPage = () => {
   return (
     <>
       <NavBar />
-      <Container>
+      <Container style={{ paddingTop: 70 }}>
         {messages.map((message, index) => {
           return (
             <Message message={message.text} sender={message.from} key={index} />
