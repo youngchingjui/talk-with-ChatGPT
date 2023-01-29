@@ -20,11 +20,11 @@ const handler = async (req: NextRequest): Promise<Response> => {
     const payload = {
         model: 'text-davinci-003',
         prompt, 
-        temperature: 0.7,
+        temperature: 0,
         top_p: 1,
         frequency_penalty: 0,
         presence_penalty: 0,
-        max_tokens: 2048,
+        max_tokens: 4000,
         n:1,
         stream: true
     }
@@ -40,7 +40,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     const data = await res.body
 
-    console.log(data)
     return new Response(data, {headers: {'Content-Type': 'application/json; charset=utf-8'}})
 }
 
