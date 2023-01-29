@@ -12,6 +12,7 @@
   "author": "Ching Jui Young",
   "license": "ISC",
   "dependencies": {
+    "@beskar-labs/parse-json-sse": "^1.0.1",
     "axios": "^1.2.2",
     "bootstrap": "^5.2.3",
     "bootstrap-icons": "^1.10.3",
@@ -22,10 +23,12 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@types/node": "18.11.18",
     "babel-plugin-inline-react-svg": "^2.0.1",
     "eslint": "^8.32.0",
     "eslint-config-next": "^13.1.5",
     "eslint-config-prettier": "^8.6.0",
-    "eslint-plugin-simple-import-sort": "^9.0.0"
+    "eslint-plugin-simple-import-sort": "^9.0.0",
+    "typescript": "4.9.4"
   }
 }
