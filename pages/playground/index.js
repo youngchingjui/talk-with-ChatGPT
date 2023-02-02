@@ -1,7 +1,6 @@
+import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
-
-import Attempt3 from "./Attempt3"
-import TestAudioTrack from "./TestAudioTrack"
+import { Button } from "react-bootstrap"
 
 const Playground = () => {
   const [message, setMessage] = useState(null)
@@ -12,7 +11,6 @@ const Playground = () => {
   const recorderRef = useRef()
   const readerRef = useRef()
   const streamRef = useRef()
-  const recordRTCRef = useRef()
 
   useEffect(() => {
     // Get temp session token from server
@@ -27,30 +25,80 @@ const Playground = () => {
     getToken()
   }, [triggerNewtoken])
 
+  // Make sure no memory leaks on unmount
   useEffect(() => {
-    // import RecordRTC and save to ref
-    const loadRecordRTC = async () => {
-      const RecordRTC = (await import("recordrtc")).default
-      recordRTCRef.current = RecordRTC
+    return () => {
+      console.log("unmounting")
+      cleanup()
     }
-    loadRecordRTC()
   }, [])
 
-  const handleStart = async () => {
-    // establish wss with AssemblyAI (AAI) at 16000 sample rate
-    socketRef.current = await new WebSocket(
+  const cleanup = () => {
+    // Clean up all references
+    console.log("cleaning up")
+    if (socketRef.current) {
+      if (socketRef.current.readyState == 1) {
+        socketRef.current.send(JSON.stringify({ terminate_session: true }))
+      }
+      socketRef.current.close()
+      socketRef.current = null
+    }
+
+    if (recorderRef.current) {
+      recorderRef.current.pauseRecording()
+      recorderRef.current = null
+    }
+
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop())
+    }
+
+    if (readerRef.current) {
+      readerRef.current.abort()
+      readerRef.current = null
+    }
+  }
+  const addSocketEventListeners = (socket) => {
+    socket.onerror = (event) => {
+      console.error("socket onerror", event)
+    }
+    socket.onclose = (event) => {
+      console.log("closing socket", event)
+    }
+  }
+
+  const addTrackEventListeners = (stream) => {
+    const track = stream.getAudioTracks()[0]
+    track.addEventListener("ended", () => {
+      console.log("track ended")
+    })
+    track.addEventListener("mute", () => {
+      console.log("track mute")
+    })
+    track.addEventListener("unmute", () => {
+      console.log("track unmute")
+    })
+  }
+
+  const startRecording = async () => {
+    // Load RecordRTC
+    const RecordRTC = (await import("recordrtc")).default
+
+    // Simultaneously 1. open websocket and 2. begin recording audio
+
+    // 1. Open new websocket connection
+    const socket = new WebSocket(
       `wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`
     )
+
     // handle incoming messages to display transcription to the DOM
     const texts = {}
-    socketRef.current.onmessage = (message) => {
+    socket.onmessage = (message) => {
       let msg = ""
       const res = JSON.parse(message.data)
 
-      // Close connection if AAI returns an error in data
       if (res.error) {
         console.error(res.error)
-        socketRef.current.close()
         return
       }
 
@@ -64,100 +112,76 @@ const Playground = () => {
       }
       setMessage(msg)
     }
-    socketRef.current.onerror = (event) => {
-      console.error("socket onerror", event)
-      socketRef.current.close()
+
+    // Add other websocket event listeners
+    addSocketEventListeners(socket)
+
+    // 2. Simultaneously begin recording audio
+    let stream
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+    } catch (err) {
+      console.error(err)
     }
-    socketRef.current.onclose = (event) => {
-      console.log("closing socket", event)
-      handleStop()
-    }
 
-    socketRef.current.onopen = () => {
-      // once socket is open, begin recording
-      setMessage("")
-      navigator.mediaDevices
-        .getUserMedia({ audio: true })
-        .then((stream) => {
-          streamRef.current = stream
-          const track = streamRef.current.getAudioTracks()[0]
-          track.addEventListener("ended", () => {
-            console.log("track ended")
-          })
-          track.addEventListener("mute", () => {
-            console.log("track mute")
-          })
-          track.addEventListener("unmute", () => {
-            console.log("track unmute")
-          })
-          recorderRef.current = new recordRTCRef.current(stream, {
-            type: "audio",
-            mimeType: "audio/webm;codecs=pcm", // endpoint requires 16bit PCM audio
-            recorderType: recordRTCRef.current.StereoAudioRecorder,
-            timeSlice: 250, // set 250 ms intervals of data that sends to AAI
-            desiredSampRate: 16000,
-            numberOfAudioChannels: 1, // real-time requires only one channel
-            bufferSize: 4096,
-            audioBitsPerSecond: 128000,
-            ondataavailable: (blob) => {
-              console.log("blob", blob)
+    // Add other track event listeners
+    addTrackEventListeners(stream)
 
-              // Reject if blob is too small, otherwise AAI will return error "Audio duration is too short"
-              // This is a workaround for a bug in RecordRTC
-              // On Safari and Firefox, on 2nd attempt to record audio, the blob size is around 2774, which causes the error
-              // Bug: I think maybe some streams are still open and not closed properly
-              if (blob.size < 4000) {
-                return
-              }
+    // Start recording incoming audio stream
+    const recorder = new RecordRTC(stream, {
+      type: "audio",
+      mimeType: "audio/webm;codecs=pcm", // endpoint requires 16bit PCM audio
+      recorderType: RecordRTC.StereoAudioRecorder,
+      timeSlice: 250, // set 250 ms intervals of data that sends to AAI
+      desiredSampRate: 16000,
+      numberOfAudioChannels: 1, // real-time requires only one channel
+      bufferSize: 4096,
+      audioBitsPerSecond: 128000,
+      ondataavailable: (blob) => {
+        console.log("blob", blob)
 
-              // convert blob to base64 string
-              readerRef.current = new FileReader()
-              readerRef.current.onload = () => {
-                const base64data = readerRef.current.result
+        // Reject if blob is too small, otherwise AAI will return error "Audio duration is too short"
+        // This is a workaround for a bug in RecordRTC
+        // On Safari and Firefox, on 2nd attempt to record audio, the blob size is around 2774, which causes the error
+        // Bug: I think maybe some streams are still open and not closed properly
+        if (blob.size < 4000) {
+          return
+        }
 
-                // ensure data is longer than 100 milliseconds
-                // if (base64data.length < 100) {
-                //   return
-                // }
-                // audio data must be sent as a base64 encoded string
-                if (socketRef.current) {
-                  socketRef.current.send(
-                    JSON.stringify({
-                      audio_data: base64data.split("base64,")[1],
-                    })
-                  )
-                }
-              }
-              readerRef.current.readAsDataURL(blob)
-            },
-            onStateChanged: (state) => {
-              console.log("state changed: ", state)
-            },
-          })
-          recorderRef.current.startRecording()
-        })
-        .catch((err) => console.error(err))
-    }
+        // convert blob to base64 string
+        const reader = new FileReader()
+        reader.onload = () => {
+          const base64data = reader.result
+
+          // audio data must be sent as a base64 encoded string
+          if (socket && socket.readyState == 1) {
+            socket.send(
+              JSON.stringify({
+                audio_data: base64data.split("base64,")[1],
+              })
+            )
+          } else if (socket.readyState !== 1) {
+            console.log("socket not ready", socket.readyState)
+          }
+        }
+        reader.readAsDataURL(blob)
+        readerRef.current = reader
+      },
+      onStateChanged: (state) => {
+        console.log("state changed: ", state)
+      },
+    })
+    recorder.startRecording()
+
+    // Save references for cleanup
+    streamRef.current = stream
+    recorderRef.current = recorder
+    socketRef.current = socket
   }
 
-  const handleStop = async () => {
-    if (socketRef.current) {
-      socketRef.current.send(JSON.stringify({ terminate_session: true }))
-      socketRef.current.close()
-      socketRef.current = null
-    }
-    if (recorderRef.current) {
-      recorderRef.current.pauseRecording()
-      recorderRef.current = null
-    }
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop())
-    }
-
-    if (readerRef.current) {
-      readerRef.current.abort()
-      readerRef.current = null
-    }
+  const stopRecording = async () => {
+    console.log("stopRecording")
+    cleanup()
 
     // Create a new token to ensure a new session
     setTriggerNewToken(Date.now())
@@ -178,13 +202,12 @@ const Playground = () => {
 
   return (
     <div>
-      <button onPointerDown={handleStart} onPointerOut={handleStop}>
+      <Link href="/">Home</Link>
+      <Button onPointerDown={startRecording} onPointerOut={stopRecording}>
         Hold to record
-      </button>
-      <button onClick={handleRequestPermission}>Request permission</button>
+      </Button>
+      <Button onClick={handleRequestPermission}>Request permission</Button>
       <div>{message}</div>
-      <TestAudioTrack />
-      <Attempt3 />
     </div>
   )
 }
