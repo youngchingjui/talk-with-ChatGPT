@@ -1,7 +1,7 @@
 import { useState } from "react"
 import ToastContainer from "react-bootstrap/ToastContainer"
 
-import useAAITranscriptionRecording from "../lib/hooks/useAAITranscriptionRecording"
+import useSpeechRecognitionRecording from "../lib/hooks/useSpeechRecognitionRecording"
 import MicIcon from "../public/svg/mic.svg"
 import MicButtonContainer from "./MicButtonContainer"
 import UnsupportedBrowserToast from "./UnsupportedBrowserToast"
@@ -23,7 +23,13 @@ const MicrophoneButton = ({
   }
 
   const { micState, startRecording, stopRecording } =
-    useAAITranscriptionRecording({ setMessage: setResult, finishedCallback })
+    useSpeechRecognitionRecording({
+      result,
+      setResult,
+      language,
+      addMessage,
+      sendToOpenAI,
+    })
 
   // BUG: On Safari, speechrecognition will automatically send end event after speechend event, but audioend and soundend are not triggered. So microphone is still on, and transcription is still running, even after speech end.
   return (
