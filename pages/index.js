@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import Container from "react-bootstrap/Container"
 
 import Message from "../components/Message"
+import MicPermissionButton from "../components/MicPermissionButton"
 import MicrophoneButton from "../components/MicrophoneButton"
 import NavBar from "../components/NavBar"
 import messages from "../mocks/messages.json"
@@ -12,6 +13,7 @@ const ChatPage = () => {
   const [recognitionLanguage, setRecognitionLanguage] = useState("en")
   const [messageList, setMessageList] = useState(messages)
   const [tempResponse, setTempResponse] = useState("")
+  const [microphonePermission, setMicrophonePermission] = useState("unknown")
 
   // Get the user's language from the HTML lang attribute on client side
   useEffect(() => {
@@ -100,13 +102,19 @@ const ChatPage = () => {
         {tempResponse.length > 0 && (
           <Message message={tempResponse} sender="bot" />
         )}
-        <MicrophoneButton
-          result={recognizedSpeech}
-          setResult={setRecognizedSpeech}
-          sendToOpenAI={sendToOpenAI}
-          language={recognitionLanguage}
-          addMessage={addMessage}
-        />
+        {microphonePermission === "granted" ? (
+          <MicrophoneButton
+            result={recognizedSpeech}
+            setResult={setRecognizedSpeech}
+            sendToOpenAI={sendToOpenAI}
+            language={recognitionLanguage}
+            addMessage={addMessage}
+          />
+        ) : (
+          <MicPermissionButton
+            setMicrophonePermission={setMicrophonePermission}
+          />
+        )}
       </Container>
     </>
   )
